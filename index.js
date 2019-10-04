@@ -23,10 +23,40 @@ const StoryblokPlugin = (api, options) => {
       version: options.version || 'draft'
     })
 
+    const typeName = options.typeName || 'StoryblokEntry'
+
+    /*  
+      TODO: add missing definition of
+      * sort_by_date
+      * tag_list
+      * meta_data
+    */
+
+    store.addSchemaTypes(`
+      type ${typeName} implements Node {
+        content: JSONObject
+        name: String
+        created_at: Date
+        published_at: Date
+        id: Int
+        slug: String
+        full_slug: String
+        uuid: String
+        path: String
+        lang: String
+        position: Int
+        is_startpage: Boolean
+        parent_id: Int
+        group_id: String
+        first_published_at: Date
+        release_id: Int
+      }
+    `)
+
     const stories = response.data.stories
 
     const contents = store.addCollection({
-      typeName: options.typeName || 'StoryblokEntry'
+      typeName
     })
 
     for (const story of stories) {
