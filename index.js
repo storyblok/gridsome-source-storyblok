@@ -1,6 +1,45 @@
 const StoryblokClient = require('storyblok-js-client')
 
 /**
+ * @method 
+ * @param  {StoryblokClient} client  StoryblokClient instance
+ * @param  {Int}             page
+ * @param  {Object}          options
+ * @return {Promise<Object>} StoryblokResponse object { data: { stories: [] }, total, perPage }
+ */
+const loadData = (client, page, options) => {
+  return client.get('cdn/stories', {
+    per_page: 25,
+    page: page,
+    ...options
+  })
+}
+
+/**
+ * @method 
+ * @param  {StoryblokClient} client  StoryblokClient instance
+ * @param  {Object}          options
+ * @return {Array}
+ */
+const loadAllData = async (client, options) => {
+  let page = 1
+  let res = await loadData(client, page, options)
+  let all = res.data.stories
+  let total = res.total
+  let lastPage = Math.ceil((total / 25))
+
+  while (page < lastPage) {
+    page++
+    res = await loadData(client, page, options)
+    res.data.stories.forEach(story => {
+      all.push(story)
+    })
+  }
+
+  return all
+}
+
+/**
  * @method StoryblokPlugin
  * @param  {Object} api      https://gridsome.org/docs/server-api/
  * @param  {Object} options  { client: { accessToken }, version, typeName }
@@ -19,9 +58,11 @@ const StoryblokPlugin = (api, options) => {
   const Storyblok = new StoryblokClient(options.client || {})
 
   api.loadSource(async store => {
-    const response = await Storyblok.get('cdn/stories', {
+    const storyblokOptions = {
       version: options.version || 'draft'
-    })
+    }
+
+    const stories = await loadAllData(Storyblok, storyblokOptions)
 
     const typeName = options.typeName || 'StoryblokEntry'
 
@@ -31,7 +72,6 @@ const StoryblokPlugin = (api, options) => {
       * tag_list
       * meta_data
     */
-
     store.addSchemaTypes(`
       type ${typeName} implements Node {
         content: JSONObject
@@ -52,8 +92,6 @@ const StoryblokPlugin = (api, options) => {
         release_id: Int
       }
     `)
-
-    const stories = response.data.stories
 
     const contents = store.addCollection({
       typeName
