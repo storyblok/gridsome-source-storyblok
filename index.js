@@ -67,15 +67,27 @@ const StoryblokPlugin = (api, options) => {
     const typeName = options.typeName || 'StoryblokEntry'
 
     store.addSchemaTypes(`
+      type AlternateStory {
+        id: ID!
+        name: String!
+        slug: String!
+        published: Boolean
+        full_slug: String!
+        is_folder: Boolean
+        parent_id: Int
+      }
+    `)
+
+    store.addSchemaTypes(`
       type ${typeName} implements Node {
         content: JSONObject
-        name: String
+        name: String!
         created_at: Date
         published_at: Date
-        id: Int
-        slug: String
-        full_slug: String
-        uuid: String
+        id: ID!
+        slug: String!
+        full_slug: String!
+        uuid: String!
         path: String
         lang: String
         position: Int
@@ -84,10 +96,10 @@ const StoryblokPlugin = (api, options) => {
         group_id: String
         first_published_at: Date
         release_id: Int
-        tag_list: [String!]
+        tag_list: [String!]!
         meta_data: JSONObject
         sort_by_date: Date
-        alternates: [JSONObject!]
+        alternates: [AlternateStory!]!
       }
     `)
 
