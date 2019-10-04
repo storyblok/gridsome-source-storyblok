@@ -10,7 +10,7 @@ yarn add gridsome-source-storyblok # or npm install gridsome-source-storyblok
 
 ## Usage
 
-1. In `gridsome.config.js`, declare the use of this plugin and pass the options to it:
+1. In `gridsome.config.js`, declare the use of the plugin and define the options:
 
 ```js
 // in gridsome.config.js
@@ -34,7 +34,7 @@ yarn add gridsome-source-storyblok # or npm install gridsome-source-storyblok
 }
 ```
 
-2. In `src/templates` folder, create a `.vue` file with the same name in `typeName` option (default is `StoryblokEntry`). In this file, set a `<page-query>` tag to load page data from GraphQL to page. For example:
+2. In the `src/templates` folder create a `.vue` file with the same name you defined in the `typeName` option (default is `StoryblokEntry`). After that set a `<page-query>` tag to load the data from GraphQL. For example:
 
 ```html
 <page-query>
@@ -50,18 +50,25 @@ query StoryblokEntry ($id: ID) {
 
 ## The options object in details
 
-When you declare of use a plugin in Gridsome config, you can pass a some optios to this plugin. For the Storyblok plugin, the options structure is:
+When you declare the use of the Storyblok plugin you can pass following options:
 
 ```js
 {
   use: 'gridsome-source-storyblok',
   options: {
     client: {
-      // the Storyblok JS Client options here (https://github.com/storyblok/storyblok-js-client)
+      // The Storyblok JS Client options here (https://github.com/storyblok/storyblok-js-client)
       accessToken: '<YOUR_ACCESS_TOKEN>' // required!
     },
-    version: 'draft' // can be draft or published (default draft)
-    typeName: 'StoryblokEntry' // the template name (default StoryblokEntry)
+    version: 'draft' // Optional. Can be draft or published (default draft)
+    typeName: 'StoryblokEntry' // Optional. The template name (default StoryblokEntry)
+    params: {} // Optional. Additional query parameters
+    additionalTypes: [
+      {type: 'datasources', name: 'StoryblokDatasource'},
+      {type: 'datasource_entries', name: 'StoryblokDatasourceEntry', params: {...additionalQueryParams}},
+      {type: 'tags', name: 'StoryblokTag'},
+      {type: 'links', name: 'StoryblokLink'}
+    ] // Optional: Get additional types like datasources, links or tags
   }
 }
 ```

@@ -4,12 +4,12 @@ const StoryblokClient = require('storyblok-js-client')
  * @method 
  * @param  {StoryblokClient} client  StoryblokClient instance
  * @param  {Int}             page
+ * @param  {String}          entity
  * @param  {Object}          options
  * @return {Promise<Object>} StoryblokResponse object { data: { stories: [] }, total, perPage }
  */
-const loadData = (client, page, options) => {
-  return client.get('cdn/stories', {
-    per_page: 25,
+const loadData = (client, entity, page, options) => {
+  return client.get(`cdn/${entity}`, {
     page: page,
     ...options
   })
@@ -18,20 +18,21 @@ const loadData = (client, page, options) => {
 /**
  * @method 
  * @param  {StoryblokClient} client  StoryblokClient instance
+ * @param  {String}          entity
  * @param  {Object}          options
  * @return {Array}
  */
-const loadAllData = async (client, options) => {
+const loadAllData = async (client, entity, options) => {
   let page = 1
-  let res = await loadData(client, page, options)
-  let all = res.data.stories
+  let res = await loadData(client, entity, page, options)
+  let all = res.data[entity]
   let total = res.total
-  let lastPage = Math.ceil((total / 25))
+  let lastPage = Math.ceil((total / options.per_page))
 
   while (page < lastPage) {
     page++
-    res = await loadData(client, page, options)
-    res.data.stories.forEach(story => {
+    res = await loadData(client, entity, page, options)
+    res.data[entity].forEach(story => {
       all.push(story)
     })
   }
@@ -42,7 +43,7 @@ const loadAllData = async (client, options) => {
 /**
  * @method StoryblokPlugin
  * @param  {Object} api      https://gridsome.org/docs/server-api/
- * @param  {Object} options  { client: { accessToken }, version, typeName }
+ * @param  {Object} options  { client: { accessToken }, version, typeName, params: {}, additionalTypes: [] }
  */
 const StoryblokPlugin = (api, options) => {
   if (!options.client) {
@@ -55,16 +56,19 @@ const StoryblokPlugin = (api, options) => {
     return
   }
 
-  const Storyblok = new StoryblokClient(options.client || {})
+  const Storyblok = new StoryblokClient(options.client)
 
   api.loadSource(async store => {
     const storyblokOptions = {
       version: options.version || 'draft'
     }
 
-    const stories = await loadAllData(Storyblok, storyblokOptions)
-
     const typeName = options.typeName || 'StoryblokEntry'
+    let types = options.additionalTypes || []
+    types.push({type: 'stories', name: typeName, params: {
+      per_page: 25,
+      ...options.params
+    }})
 
     store.addSchemaTypes(`
       type AlternateStory {
@@ -103,14 +107,31 @@ const StoryblokPlugin = (api, options) => {
       }
     `)
 
-    const contents = store.addCollection({
-      typeName
-    })
-
-    for (const story of stories) {
-      contents.addNode({
-        ...story
+    for (const entityType of types) {
+      const params = entityType.params || {}
+      const entities = await loadAllData(Storyblok, entityType.type, {
+        per_page: 1000,
+        ...params,
+        ...storyblokOptions
       })
+
+      const contents = store.addCollection({
+        typeName: entityType.name
+      })
+
+      if (entityType.type == 'links') {
+        for (const entity in entities) {
+          contents.addNode({
+            ...entities[entity]
+          })
+        }
+      } else {
+        for (const entity of entities) {
+          contents.addNode({
+            ...entity
+          })
+        }
+      }
     }
   })
 }
