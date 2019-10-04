@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "repository": "https://github.com/storyblok/gridsome-source-storyblok.git",
-  "author": "Emanuel Souza <emanuelgdesouza@gmail.com>",
+  "author": "Emanuel Souza <eg@storyblok.com>",
   "license": "MIT",
   "engines": {
     "node": ">=8"
@@ -13,7 +13,8 @@
     "url": "https://github.com/storyblok/gridsome-source-storyblok/issues"
   },
   "dependencies": {
-    "storyblok-js-client": "^1.0.34"
+    "storyblok-js-client": "^1.0.34",
+    "storyblok-vue": "^1.0.5"
   },
   "keywords": [
     "gridsome",
