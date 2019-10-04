@@ -66,12 +66,6 @@ const StoryblokPlugin = (api, options) => {
 
     const typeName = options.typeName || 'StoryblokEntry'
 
-    /*  
-      TODO: add missing definition of
-      * sort_by_date
-      * tag_list
-      * meta_data
-    */
     store.addSchemaTypes(`
       type ${typeName} implements Node {
         content: JSONObject
@@ -90,6 +84,10 @@ const StoryblokPlugin = (api, options) => {
         group_id: String
         first_published_at: Date
         release_id: Int
+        tag_list: [String!]
+        meta_data: JSONObject
+        sort_by_date: Date
+        alternates: [JSONObject!]
       }
     `)
 
