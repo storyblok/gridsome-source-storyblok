@@ -1,6 +1,6 @@
 # Gridsome Source Storyblok
 
-The official Storyblok integration with Gridsome
+The official [Storyblok](https://www.storyblok.com/) integration with [Gridsome](https://gridsome.org/)
 
 ## Install
 
