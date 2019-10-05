@@ -1,10 +1,10 @@
 {
   "name": "gridsome-source-storyblok",
   "description": "An official packge for integration Storyblok in Gridsome project",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "main": "index.js",
   "repository": "https://github.com/storyblok/gridsome-source-storyblok.git",
-  "author": "Emanuel Souza <eg@storyblok.com>",
+  "author": "Emanuel Souza <eg@storyblok.com>, Alexander Feiglstorfer <af@storyblok.com",
   "license": "MIT",
   "engines": {
     "node": ">=8"
