@@ -27,10 +27,7 @@ yarn add gridsome-source-storyblok # or npm install gridsome-source-storyblok
         typeName: 'StoryblokEntry'
       }
     }
-  ],
-  templates: {
-    StoryblokEntry: '/:slug'
-  }
+  ]
 }
 ```
 
@@ -46,6 +43,35 @@ query StoryblokEntry ($id: ID) {
   }
 }
 </page-query>
+```
+
+3. Edit the file `gridsome.server.js` to use a GraphQL query to generate the pages using Storyblok's full_slug attribute
+
+```js
+module.exports = function (api) {
+  api.createPages(async ({ graphql, createPage }) => {
+    const { data } = await graphql(`{
+      allStoryblokEntry {
+        edges {
+          node {
+            id
+            full_slug
+          }
+        }
+      }
+    }`)
+
+    data.allStoryblokEntry.edges.forEach(({ node }) => {
+      createPage({
+        path: `/${node.full_slug}`,
+        component: './src/templates/StoryblokEntry.vue',
+        context: {
+          id: node.id
+        }
+      })
+    })
+  })
+}
 ```
 
 ## The options object in details
