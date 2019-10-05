@@ -101,6 +101,30 @@ When you declare the use of the Storyblok plugin you can pass following options:
 }
 ```
 
+## Rendering of the Rich Text field
+
+This plugin comes with a built in renderer to get html output from Storyblok's Rich Text field. Create and register a `Richtext.vue` component with the code below to use the renderer in your components like this: `<richtext :text="blok.richtext"></richtext>`.
+
+~~~js
+<template>
+  <div>
+    <div v-html="richtext"></div>
+  </div>
+</template>
+
+<script>
+export default {
+  props: ['text'],
+  computed: {
+    richtext() {
+      return this.text ? this.$storyapi.richTextResolver.render(this.text) : ''
+    }
+  }
+}
+</script>
+~~~
+
+
 ## Contribution
 
 Fork me on [Github](https://github.com/storyblok/gridsome-source-storyblok)
