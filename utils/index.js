@@ -79,6 +79,11 @@ const getSpace = async client => {
   return res.data.space || {}
 }
 
+/**
+ * @method getLanguages
+ * @param  {Object} space  Space Object from Storyblok API
+ * @return {Array<String>} can be [''] (only one language) or ['', 'pt/*'] with two or more languages
+ */
 const getLanguages = space => {
   return [
     ...space.language_codes.map(lang => lang + '/*'),

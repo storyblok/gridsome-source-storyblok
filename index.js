@@ -28,11 +28,17 @@ const StoryblokPlugin = (api, options) => {
     }
 
     const typeName = options.typeName || 'StoryblokEntry'
-    let types = options.additionalTypes || []
-    types.push({type: 'stories', name: typeName, params: {
-      per_page: 25,
-      ...options.params
-    }})
+    const types = [
+      {
+        type: 'stories',
+        name: typeName,
+        params: {
+          per_page: 25,
+          ...options.params
+        }
+      },
+      ...options.additionalTypes || []
+    ]
 
     createSchema(store, typeName)
 
