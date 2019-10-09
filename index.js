@@ -27,7 +27,7 @@ const StoryblokPlugin = (api, options) => {
 
   api.loadSource(async store => {
     const space = await getSpace(Storyblok)
-    const languages = getLanguages(space)
+    const languages = getLanguages(space.language_codes)
 
     const storyblokOptions = {
       version: options.version || 'draft'

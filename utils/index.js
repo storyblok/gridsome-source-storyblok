@@ -1,6 +1,7 @@
 const getPath = require('./get-path')
 const transformStory = require('./transform-story')
 const getClientOptions = require('./get-client-options')
+const getLanguages = require('./get-languages')
 
 /**
  * @method 
@@ -56,18 +57,6 @@ const getSpace = async client => {
   const res = await client.get('cdn/spaces/me')
 
   return res.data.space || {}
-}
-
-/**
- * @method getLanguages
- * @param  {Object} space  Space Object from Storyblok API
- * @return {Array<String>} can be [''] (only one language) or ['', 'pt/*'] with two or more languages
- */
-const getLanguages = space => {
-  return [
-    ...space.language_codes.map(lang => lang + '/*'),
-    '' // default languages does not need transform path
-  ]
 }
 
 /**
