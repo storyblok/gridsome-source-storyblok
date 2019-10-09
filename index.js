@@ -1,5 +1,11 @@
 const StoryblokClient = require('storyblok-js-client')
-const { getLanguages, loadAllData, getSpace, createSchema } = require('./utils')
+const {
+  getLanguages,
+  loadAllData,
+  getSpace,
+  createSchema,
+  processData
+} = require('./utils')
 
 /**
  * @method StoryblokPlugin
@@ -28,47 +34,30 @@ const StoryblokPlugin = (api, options) => {
     }
 
     const typeName = options.typeName || 'StoryblokEntry'
-    const types = [
-      {
-        type: 'stories',
-        name: typeName,
-        params: {
-          per_page: 25,
-          ...options.params
-        }
-      },
-      ...options.additionalTypes || []
-    ]
+    const types = options.additionalTypes || []
 
     createSchema(store, typeName)
 
     for (const language of languages) {
-      for (const entityType of types) {
-        const params = entityType.params || {}
-        const entities = await loadAllData(Storyblok, entityType.type, {
-          per_page: 1000,
-          ...params,
-          ...storyblokOptions
-        }, language)
-  
-        const contents = store.addCollection({
-          typeName: entityType.name
-        })
-  
-        if (entityType.type == 'links') {
-          for (const entity in entities) {
-            contents.addNode({
-              ...entities[entity]
-            })
-          }
-        } else {
-          for (const entity of entities) {
-            contents.addNode({
-              ...entity
-            })
-          }
-        }
+      const optionsData = {
+        per_page: 25,
+        ...options.params,
+        ...storyblokOptions
       }
+      const entity = {
+        type: 'stories',
+        name: typeName
+      }
+      await processData(store, Storyblok, entity, optionsData, language)
+    }
+
+    for (const entityType of types) {
+      const params = entityType.params || {}
+      const optionsData = {
+        ...params,
+        ...storyblokOptions
+      }
+      await processData(store, Storyblok, entityType, optionsData)
     }
   })
 }

@@ -135,12 +135,38 @@ const createSchema = (store, typeName) => {
   `)
 }
 
+/**
+ * @method processData
+ * @param  {Object} store    Gridsome Data Store API
+ * @param  {StoryblokClient} client  StoryblokClient instance
+ * @param  {Object} entity   { type: String, name: String }
+ * @param  {Object} options
+ * @param  {String} language
+ */
+const processData = async (store, client, entity, options, language = '') => {
+  const data = await loadAllData(client, entity.type, {
+    per_page: 1000,
+    ...options
+  }, language)
+
+  const contents = store.addCollection({
+    typeName: entity.name
+  })
+
+  for (const value of Object.values(data)) {
+    contents.addNode({
+      ...value
+    })
+  }
+}
+
 module.exports = {
   getPath,
-  getLanguages,
   getSpace,
-  loadAllData,
   loadData,
+  loadAllData,
+  processData,
+  getLanguages,
   createSchema,
   transformStory
 }
