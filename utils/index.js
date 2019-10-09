@@ -1,13 +1,5 @@
-/**
- * @method getPath
- * @param  {String} entity
- * @param  {String} language can be '' (default)
- * @return {String}
- */
-const getPath = (entity, language) => {
-  const languagePath = language.length > 0 ? `?starts_with=${language}` : ''
-  return `cdn/${entity}${languagePath}`
-}
+const getPath = require('./get-path')
+const getClientOptions = require('./get-client-options')
 
 /**
  * @method transformStory
@@ -31,11 +23,10 @@ const transformStory = story => {
  * @return {Promise<Object>} StoryblokResponse object { data: { stories: [] }, total, perPage }
  */
 const loadData = (client, entity, page, options, language) => {
-  const path = getPath(entity, language)
-  return client.get(path, {
-    page: page,
-    ...options
-  })
+  const path = getPath(entity)
+  const _options = getClientOptions(language || '', { ...options, page })
+
+  return client.get(path, _options)
 }
 
 /**
