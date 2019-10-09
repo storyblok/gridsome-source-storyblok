@@ -1,5 +1,5 @@
 const StoryblokClient = require('storyblok-js-client')
-const { getLanguages, loadAllData, getSpace } = require('./utils')
+const { getLanguages, loadAllData, getSpace, createSchema } = require('./utils')
 
 /**
  * @method StoryblokPlugin
@@ -34,42 +34,7 @@ const StoryblokPlugin = (api, options) => {
       ...options.params
     }})
 
-    store.addSchemaTypes(`
-      type AlternateStory {
-        id: ID!
-        name: String!
-        slug: String!
-        published: Boolean
-        full_slug: String!
-        is_folder: Boolean
-        parent_id: Int
-      }
-    `)
-
-    store.addSchemaTypes(`
-      type ${typeName} implements Node {
-        content: JSONObject
-        name: String!
-        created_at: Date
-        published_at: Date
-        id: ID!
-        slug: String!
-        full_slug: String!
-        uuid: String!
-        path: String
-        lang: String
-        position: Int
-        is_startpage: Boolean
-        parent_id: Int
-        group_id: String
-        first_published_at: Date
-        release_id: Int
-        tag_list: [String!]!
-        meta_data: JSONObject
-        sort_by_date: Date
-        alternates: [AlternateStory!]!
-      }
-    `)
+    createSchema(store, typeName)
 
     for (const language of languages) {
       for (const entityType of types) {
