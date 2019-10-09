@@ -1,23 +1,8 @@
 const getPath = require('./get-path')
 const transformStory = require('./transform-story')
-const getClientOptions = require('./get-client-options')
 const getLanguages = require('./get-languages')
 const createSchema = require('./create-schema')
-
-/**
- * @method 
- * @param  {StoryblokClient} client  StoryblokClient instance
- * @param  {Int}             page
- * @param  {String}          entity
- * @param  {Object}          options
- * @return {Promise<Object>} StoryblokResponse object { data: { stories: [] }, total, perPage }
- */
-const loadData = (client, entity, page, options, language) => {
-  const path = getPath(entity)
-  const _options = getClientOptions(language || '', { ...options, page })
-
-  return client.get(path, _options)
-}
+const loadData = require('./load-data')
 
 /**
  * @method 
