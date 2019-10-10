@@ -6,6 +6,10 @@
   "repository": "https://github.com/storyblok/gridsome-source-storyblok.git",
   "author": "Emanuel Souza <eg@storyblok.com>, Alexander Feiglstorfer <af@storyblok.com",
   "license": "MIT",
+  "scripts": {
+    "test:unit": "jest --verbose",
+    "test:coverage": "jest --coverage"
+  },
   "engines": {
     "node": ">=8"
   },
@@ -20,5 +24,8 @@
     "gridsome",
     "gridsome-plugin",
     "storyblok"
-  ]
+  ],
+  "devDependencies": {
+    "jest": "^24.9.0"
+  }
 }
