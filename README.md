@@ -4,6 +4,11 @@ The official [Storyblok](https://www.storyblok.com/) integration with [Gridsome]
 
 To see it in action take a look at the [Storyblok Gridsome Boilerplate](https://github.com/storyblok/storyblok-gridsome-boilerplate).
 
+![Version](https://flat.badgen.net/npm/v/gridsome-source-storyblok?icon=npm)
+![Downloads](https://flat.badgen.net/npm/dm/gridsome-source-storyblok?icon=npm)
+![Stars](https://flat.badgen.net/github/stars/storyblok/gridsome-source-storyblok?icon=github)
+![Status](https://flat.badgen.net/github/status/storyblok/gridsome-source-storyblok?icon=github)
+
 ## Install
 
 ```sh
