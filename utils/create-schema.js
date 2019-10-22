@@ -26,7 +26,7 @@ const createSchema = (store, typeName) => {
       slug: String!
       full_slug: String!
       uuid: String!
-      path: String
+      real_path: String
       lang: String
       position: Int
       is_startpage: Boolean

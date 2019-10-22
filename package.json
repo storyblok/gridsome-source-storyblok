@@ -1,7 +1,7 @@
 {
   "name": "gridsome-source-storyblok",
   "description": "Storyblok source for Gridsome with live preview editor",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "main": "index.js",
   "repository": "https://github.com/storyblok/gridsome-source-storyblok.git",
   "author": "Emanuel Souza <eg@storyblok.com>, Alexander Feiglstorfer <af@storyblok.com",

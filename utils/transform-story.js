@@ -4,10 +4,13 @@
  * @return {Object}       rewrited id field to prevent id conflicts
  */
 const transformStory = (story = {}) => {
-  const { name, id, lang } = story
+  const { name, id, lang, path } = story
+  delete story.path
+
   return {
     ...story,
-    id: `${name.toLowerCase()}-${id}-${lang}`
+    real_path: path,
+    id: `story-${id}-${lang}`
   }
 }
 
