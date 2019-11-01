@@ -1,7 +1,6 @@
 const StoryblokClient = require('storyblok-js-client')
 const {
   getLanguages,
-  loadAllData,
   getSpace,
   createSchema,
   processData
