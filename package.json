@@ -7,7 +7,7 @@
   "author": "Emanuel Souza <eg@storyblok.com>, Alexander Feiglstorfer <af@storyblok.com",
   "license": "MIT",
   "scripts": {
-    "test:unit": "jest --verbose",
+    "test": "jest --verbose",
     "test:coverage": "jest --coverage"
   },
   "engines": {
