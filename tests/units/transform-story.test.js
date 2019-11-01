@@ -5,13 +5,15 @@ describe('transformStory function', () => {
     const data = {
       name: 'Home',
       lang: 'default',
-      id: 123456
+      id: 123456,
+      path: null
     }
 
     const result = {
       name: 'Home',
       lang: 'default',
-      id: 'home-123456-default'
+      id: 'story-123456-default',
+      real_path: null
     }
     expect(transformStory(data)).toEqual(result)
   })
@@ -22,7 +24,8 @@ describe('transformStory function', () => {
       full_slug: 'pt/home',
       name: 'Home',
       lang: 'pt',
-      id: 123456
+      id: 123456,
+      path: null
     }
 
     const result = {
@@ -30,7 +33,8 @@ describe('transformStory function', () => {
       full_slug: 'pt/home',
       name: 'Home',
       lang: 'pt',
-      id: 'home-123456-pt'
+      id: 'story-123456-pt',
+      real_path: null
     }
     expect(transformStory(data)).toEqual(result)
   })
