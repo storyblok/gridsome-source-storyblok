@@ -3,7 +3,7 @@ import StoryblokClient from 'storyblok-js-client'
 
 export default function (Vue, options, context) {
   const Client = {
-    install() {
+    install () {
       if (!Vue.prototype.$storyapi) {
         Vue.prototype.$storyapi = new StoryblokClient(options.client)
       }

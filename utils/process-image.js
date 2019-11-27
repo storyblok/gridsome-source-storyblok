@@ -5,9 +5,9 @@ const { PLUGIN_ROOT, SOURCE_ROOT } = require('./constants')
 
 /**
  * @method downloadImage
- * @param  {String} url 
+ * @param  {String} url
  * @param  {String} filePath
- * @return {Promise} 
+ * @return {Promise}
  */
 const downloadImage = (url, filePath) => {
   if (fs.existsSync(filePath)) {
@@ -53,7 +53,7 @@ const getFilename = url => url.substring(url.lastIndexOf('/') + 1)
  * @method getOptionsFromImage
  * @param  {String} imageDirectory
  * @param  {String} imageURL       Storyblok image URL
- * @return {Object}                { url, filePath, path, filename } 
+ * @return {Object}                { url, filePath, path, filename }
  */
 const getOptionsFromImage = (imageDirectory, imageURL) => {
   const url = imageURL

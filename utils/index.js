@@ -14,7 +14,7 @@ const createDirectory = require('./create-directory')
 const isStoriesContent = entity => entity.type === 'stories'
 
 /**
- * @method 
+ * @method
  * @param  {StoryblokClient} client  StoryblokClient instance
  * @param  {String}          entity
  * @param  {Object}          storyBlokOptions
@@ -23,9 +23,9 @@ const isStoriesContent = entity => entity.type === 'stories'
 const loadAllData = async (client, entity, storyBlokOptions, language) => {
   let page = 1
   let res = await loadData(client, entity, page, storyBlokOptions, language)
-  let all = res.data[entity]
-  let total = res.total
-  let lastPage = Math.ceil((total / storyBlokOptions.per_page))
+  const all = res.data[entity]
+  const total = res.total
+  const lastPage = Math.ceil((total / storyBlokOptions.per_page))
 
   while (page < lastPage) {
     page++
