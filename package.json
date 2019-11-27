@@ -8,7 +8,9 @@
   "license": "MIT",
   "scripts": {
     "test": "jest --verbose",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "engines": {
     "node": ">=8"
