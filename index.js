@@ -3,8 +3,10 @@ const {
   getLanguages,
   getSpace,
   createSchema,
-  processData
+  processData,
+  createDirectory
 } = require('./utils')
+const { IMAGE_DIRECTORY, SOURCE_ROOT } = require('./utils/constants')
 
 /**
  * @method StoryblokPlugin
@@ -34,6 +36,12 @@ const StoryblokPlugin = (api, options) => {
 
     const typeName = options.typeName || 'StoryblokEntry'
     const types = options.additionalTypes || []
+    const downloadImages = options.downloadImages || false
+    const imageDirectory = options.imageDirectory || IMAGE_DIRECTORY
+
+    if (downloadImages) {
+      createDirectory(`${SOURCE_ROOT}${imageDirectory}`)
+    }
 
     createSchema(store, typeName)
 
@@ -47,7 +55,19 @@ const StoryblokPlugin = (api, options) => {
         type: 'stories',
         name: typeName
       }
-      await processData(store, Storyblok, entity, optionsData, language)
+      const pluginOptions = {
+        downloadImages,
+        imageDirectory
+      }
+
+      await processData(
+        store,
+        Storyblok,
+        entity,
+        optionsData,
+        language,
+        pluginOptions
+      )
     }
 
     for (const entityType of types) {
@@ -56,7 +76,13 @@ const StoryblokPlugin = (api, options) => {
         ...params,
         ...storyblokOptions
       }
-      await processData(store, Storyblok, entityType, optionsData)
+
+      await processData(
+        store,
+        Storyblok,
+        entityType,
+        optionsData
+      )
     }
   })
 }
