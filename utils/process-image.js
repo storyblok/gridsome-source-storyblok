@@ -4,13 +4,22 @@ const fs = require('fs')
 const { PLUGIN_ROOT, SOURCE_ROOT } = require('./constants')
 
 /**
+ * @method isStoryblokImage
+ * @param  {String} value
+ * @return {Boolean}
+ */
+const isStoryblokImage = value => value.indexOf('//a.storyblok.com/f/') !== -1
+
+/**
  * @method downloadImage
  * @param  {String} url
  * @param  {String} filePath
+ * @param  {String} filename
  * @return {Promise}
  */
-const downloadImage = (url, filePath) => {
+const downloadImage = (url, filePath, filename) => {
   if (fs.existsSync(filePath)) {
+    console.log(`Image ${filename} already downloaded`)
     return
   }
 
@@ -69,6 +78,41 @@ const getOptionsFromImage = (imageDirectory, imageURL) => {
   }
 }
 
+const processItem = imageDirectory => async item => {
+  for (const key in item) {
+    const value = item[key]
+    if (value.constructor === String) {
+      if (isStoryblokImage(value)) {
+        try {
+          const image = value
+          const data = getOptionsFromImage(imageDirectory, image)
+          const { url, filePath, path, filename } = data
+          item[key] = {
+            url,
+            filename,
+            path
+          }
+          await downloadImage(url, filePath, filename)
+        } catch (e) {
+          Promise.reject(e)
+        }
+      }
+    }
+
+    if (value.constructor === Array) {
+      value.forEach(_item => {
+        processItem(imageDirectory)(_item)
+      })
+    }
+
+    if (value.constructor === Object) {
+      for (const _key in value) {
+        processItem(imageDirectory)(value[_key])
+      }
+    }
+  }
+}
+
 /**
  * @method processImage
  * @param  {Object} options { imageDirectory: String }
@@ -81,16 +125,10 @@ const processImage = (options, story) => {
     const body = story.content.body || []
 
     body.forEach(async item => {
-      if (item.image) {
-        try {
-          const image = item.image
-          const data = getOptionsFromImage(imageDirectory, image)
-          const { url, filePath } = data
-          item.image = data
-          await downloadImage(url, filePath)
-        } catch (e) {
-          reject(e)
-        }
+      try {
+        processItem(imageDirectory)(item)
+      } catch (e) {
+        reject(e)
       }
     })
 
