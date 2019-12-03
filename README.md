@@ -93,9 +93,11 @@ When you declare the use of the Storyblok plugin you can pass following options:
       // The Storyblok JS Client options here (https://github.com/storyblok/storyblok-js-client)
       accessToken: '<YOUR_ACCESS_TOKEN>' // required!
     },
-    version: 'draft' // Optional. Can be draft or published (default draft)
-    typeName: 'StoryblokEntry' // Optional. The template name (default StoryblokEntry)
-    params: {} // Optional. Additional query parameters
+    version: 'draft', // Optional. Can be draft or published (default draft)
+    typeName: 'StoryblokEntry', // Optional. The template name (default StoryblokEntry)
+    params: {}, // Optional. Additional query parameters
+    downloadImages: true, // Optional. default false,
+    imageDirectory: 'storyblok_images', // Optional. Folder to put the downloaded images
     additionalTypes: [
       {type: 'datasources', name: 'StoryblokDatasource'},
       {type: 'datasource_entries', name: 'StoryblokDatasourceEntry', params: {...additionalQueryParams}},
@@ -129,6 +131,42 @@ export default {
 </script>
 ~~~
 
+## Downloading images
+
+When `downloadImages` option is marked as true, this plugin will be searching in each story for a image and download it to `src/<imageDirectory>` folder. In your components, you can use the [g-image](https://gridsome.org/docs/images/) tag. An important thing is that image property in story will be a object with some fields, not a string. Bellow, we show you an example of this:
+
+```html
+<template>
+  <div>
+    <g-image :src="imageURL"></g-image>
+  </div>
+</template>
+
+<script>
+export default {
+  props: ['blok'],
+  computed: {
+    imageURL () {
+      // When options.downloadImages is false, the image property is a string
+      if (typeof this.blok.image === 'string') {
+        return this.blok.image
+      }
+
+      // When options.downloadImages is true, the image property is a object
+      // Reference of this: https://github.com/gridsome/gridsome/issues/292
+      const path = this.blok.image.path
+      return require('!!assets-loader?width=800&quality=100&fit=inside!~/' + path)
+    }
+  }
+}
+</script>
+
+<style scoped>
+img {
+  max-width: 100%;
+}
+</style>
+```
 
 ## Contribution
 

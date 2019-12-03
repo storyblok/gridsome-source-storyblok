@@ -2,7 +2,7 @@ const getPath = require('./get-path')
 const getClientOptions = require('./get-client-options')
 
 /**
- * @method 
+ * @method
  * @param  {StoryblokClient} client  StoryblokClient instance
  * @param  {Int}             page
  * @param  {String}          entity

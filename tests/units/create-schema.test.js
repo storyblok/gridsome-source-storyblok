@@ -1,7 +1,7 @@
 const { createSchema } = require('../../utils')
 
 describe('createSchema function', () => {
-  test(`call createSchema should be call addSchemaTypes function twice`, () => {
+  test('call createSchema should be call addSchemaTypes function twice', () => {
     const store = {}
     store.addSchemaTypes = jest.fn(str => str)
     createSchema(store, 'StoryblokEntry')
@@ -42,5 +42,4 @@ describe('createSchema function', () => {
 
     expect(data).toEqual(result.replace(/\s/g, ''))
   })
-  
 })
