@@ -8,7 +8,12 @@ const { PLUGIN_ROOT, SOURCE_ROOT } = require('./constants')
  * @param  {String} value
  * @return {Boolean}
  */
-const isStoryblokImage = value => value.indexOf('//a.storyblok.com/f/') !== -1
+const isStoryblokImage = value => {
+  const isStoryblokPath = value.indexOf('//a.storyblok.com/f/') !== -1
+  const isImagePath = value.match(/\.(jpeg|jpg|gif|png)$/) !== null
+
+  return isStoryblokPath && isImagePath
+}
 
 /**
  * @method downloadImage
@@ -24,19 +29,27 @@ const downloadImage = (url, filePath, filename) => {
   }
 
   const URL = `https:${url}`
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     console.log(`Downloading: ${URL}...`)
     const file = fs.createWriteStream(filePath)
 
-    https.get(URL, (response) => {
+    https.get(URL, response => {
       response.pipe(file)
       file.on('finish', () => {
         console.log('Download finished!')
         file.close(resolve)
       })
-    }).on('error', (err) => {
+    }).on('error', err => {
+      console.error(`Error on processing image ${filename}`)
       console.error(err.message)
-      fs.unlink(resolve)
+      fs.unlink(filePath, err => {
+        if (err) {
+          reject(err)
+        }
+
+        console.log(`Removed the ${filePath} image correct`)
+        resolve(true)
+      })
     })
   })
 }
@@ -81,7 +94,7 @@ const getOptionsFromImage = (imageDirectory, imageURL) => {
 const processItem = imageDirectory => async item => {
   for (const key in item) {
     const value = item[key]
-    if (value.constructor === String) {
+    if (value && value.constructor === String) {
       if (isStoryblokImage(value)) {
         try {
           const image = value
@@ -99,15 +112,23 @@ const processItem = imageDirectory => async item => {
       }
     }
 
-    if (value.constructor === Array) {
-      value.forEach(_item => {
-        processItem(imageDirectory)(_item)
+    if (value && value.constructor === Array) {
+      value.forEach(async _item => {
+        try {
+          await processItem(imageDirectory)(_item)
+        } catch (e) {
+          Promise.reject(e)
+        }
       })
     }
 
-    if (value.constructor === Object) {
+    if (value && value.constructor === Object) {
       for (const _key in value) {
-        processItem(imageDirectory)(value[_key])
+        try {
+          await processItem(imageDirectory)(value[_key])
+        } catch (e) {
+          Promise.reject(e)
+        }
       }
     }
   }
@@ -122,7 +143,7 @@ const processItem = imageDirectory => async item => {
 const processImage = (options, story) => {
   return new Promise((resolve, reject) => {
     const imageDirectory = options.imageDirectory
-    const body = story.content.body || []
+    const body = [story.content]
 
     body.forEach(async item => {
       try {
