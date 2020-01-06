@@ -29,19 +29,27 @@ const downloadImage = (url, filePath, filename) => {
   }
 
   const URL = `https:${url}`
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     console.log(`Downloading: ${URL}...`)
     const file = fs.createWriteStream(filePath)
 
-    https.get(URL, (response) => {
+    https.get(URL, response => {
       response.pipe(file)
       file.on('finish', () => {
         console.log('Download finished!')
         file.close(resolve)
       })
-    }).on('error', (err) => {
+    }).on('error', err => {
+      console.error(`Error on processing image ${filename}`)
       console.error(err.message)
-      fs.unlink(resolve)
+      fs.unlink(filePath, err => {
+        if (err) {
+          reject(err)
+        }
+
+        console.log(`Removed the ${filePath} image correct`)
+        resolve(true)
+      })
     })
   })
 }
