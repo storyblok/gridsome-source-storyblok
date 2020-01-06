@@ -8,7 +8,12 @@ const { PLUGIN_ROOT, SOURCE_ROOT } = require('./constants')
  * @param  {String} value
  * @return {Boolean}
  */
-const isStoryblokImage = value => value.indexOf('//a.storyblok.com/f/') !== -1
+const isStoryblokImage = value => {
+  const isStoryblokPath = value.indexOf('//a.storyblok.com/f/') !== -1
+  const isImagePath = value.match(/\.(jpeg|jpg|gif|png)$/) !== null
+
+  return isStoryblokPath && isImagePath
+}
 
 /**
  * @method downloadImage
