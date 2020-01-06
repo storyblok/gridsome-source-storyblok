@@ -94,7 +94,7 @@ const getOptionsFromImage = (imageDirectory, imageURL) => {
 const processItem = imageDirectory => async item => {
   for (const key in item) {
     const value = item[key]
-    if (value.constructor === String) {
+    if (value && value.constructor === String) {
       if (isStoryblokImage(value)) {
         try {
           const image = value
@@ -112,15 +112,23 @@ const processItem = imageDirectory => async item => {
       }
     }
 
-    if (value.constructor === Array) {
-      value.forEach(_item => {
-        processItem(imageDirectory)(_item)
+    if (value && value.constructor === Array) {
+      value.forEach(async _item => {
+        try {
+          await processItem(imageDirectory)(_item)
+        } catch (e) {
+          Promise.reject(e)
+        }
       })
     }
 
-    if (value.constructor === Object) {
+    if (value && value.constructor === Object) {
       for (const _key in value) {
-        processItem(imageDirectory)(value[_key])
+        try {
+          await processItem(imageDirectory)(value[_key])
+        } catch (e) {
+          Promise.reject(e)
+        }
       }
     }
   }
@@ -135,7 +143,7 @@ const processItem = imageDirectory => async item => {
 const processImage = (options, story) => {
   return new Promise((resolve, reject) => {
     const imageDirectory = options.imageDirectory
-    const body = story.content.body || []
+    const body = [story.content]
 
     body.forEach(async item => {
       try {
