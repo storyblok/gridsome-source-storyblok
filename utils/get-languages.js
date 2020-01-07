@@ -5,7 +5,7 @@
  */
 const getLanguages = (codes = []) => {
   return [
-    ...codes.map(lang => lang + '/*'),
+    ...codes.map(lang => lang + '/'),
     '' // default languages does not need transform path
   ]
 }
