@@ -19,7 +19,7 @@
     "url": "https://github.com/storyblok/gridsome-source-storyblok/issues"
   },
   "dependencies": {
-    "storyblok-js-client": "^1.0.34",
+    "storyblok-js-client": "^2.0.12",
     "storyblok-vue": "^1.0.5"
   },
   "keywords": [
