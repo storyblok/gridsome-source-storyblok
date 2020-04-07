@@ -1,10 +1,11 @@
 const getPath = require('./get-path')
-const transformStory = require('./transform-story')
+const loadData = require('./load-data')
 const getLanguages = require('./get-languages')
 const createSchema = require('./create-schema')
-const loadData = require('./load-data')
 const processImage = require('./process-image')
 const createDirectory = require('./create-directory')
+const transformStory = require('./transform-story')
+const filterAdditionalTypes = require('./filter-additional-types')
 
 /**
  * @method isStoriesContent
@@ -138,5 +139,6 @@ module.exports = {
   createDirectory,
   transformStory,
   processTagData,
-  processStoriesData
+  processStoriesData,
+  filterAdditionalTypes
 }

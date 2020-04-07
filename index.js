@@ -6,7 +6,8 @@ const {
   processData,
   createDirectory,
   processTagData,
-  processStoriesData
+  processStoriesData,
+  filterAdditionalTypes
 } = require('./utils')
 
 const {
@@ -129,7 +130,7 @@ const StoryblokPlugin = (api, options) => {
     /**
      * TO ADDITIONAL TYPES
      */
-    const additionalTypes = options.additionalTypes || []
+    const additionalTypes = filterAdditionalTypes(options.additionalTypes || [])
     for (const entityType of additionalTypes) {
       const params = entityType.params || {}
 

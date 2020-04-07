@@ -107,16 +107,16 @@ When you declare the use of the Storyblok plugin you can pass following options:
     },
     downloadImages: true, // Optional. default false,
     imageDirectory: 'storyblok_images', // Optional. Folder to put the downloaded images
-    // Optional: Get additional types like datasources, links or tags
+    // Optional: Get additional types like datasources, links or datasource_entries
     additionalTypes: [
       {
-        type: 'datasources',
-        name: 'StoryblokDatasource'
+        type: 'datasources', // required
+        name: 'StoryblokDatasource' // required
       },
       {
         type: 'datasource_entries',
         name: 'StoryblokDatasourceEntry',
-        params: { ...additionalQueryParams }
+        params: { ...additionalQueryParams } // optional
       },
       {
         type: 'links',
