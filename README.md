@@ -94,16 +94,35 @@ When you declare the use of the Storyblok plugin you can pass following options:
       accessToken: '<YOUR_ACCESS_TOKEN>' // required!
     },
     version: 'draft', // Optional. Can be draft or published (default draft)
-    typeName: 'StoryblokEntry', // Optional. The template name (default StoryblokEntry)
-    params: {}, // Optional. Additional query parameters
+    // Optional: Config story and tag types names and request calls
+    types: {
+      story: {
+        name: 'StoryblokEntry', // The name of Story template and type (default StoryblokEntry)
+        params: {} // Additional query parameters
+      },
+      tag: {
+        name: 'StoryblokTag', // The name of Tag template and type (default StoryblokTag)
+        params: {} // Additional query parameters
+      }
+    },
     downloadImages: true, // Optional. default false,
     imageDirectory: 'storyblok_images', // Optional. Folder to put the downloaded images
+    // Optional: Get additional types like datasources, links or datasource_entries
     additionalTypes: [
-      {type: 'datasources', name: 'StoryblokDatasource'},
-      {type: 'datasource_entries', name: 'StoryblokDatasourceEntry', params: {...additionalQueryParams}},
-      {type: 'tags', name: 'StoryblokTag'},
-      {type: 'links', name: 'StoryblokLink'}
-    ] // Optional: Get additional types like datasources, links or tags
+      {
+        type: 'datasources', // required
+        name: 'StoryblokDatasource' // required
+      },
+      {
+        type: 'datasource_entries',
+        name: 'StoryblokDatasourceEntry',
+        params: { ...additionalQueryParams } // optional
+      },
+      {
+        type: 'links',
+        name: 'StoryblokLink'
+      }
+    ]
   }
 }
 ```
@@ -167,6 +186,83 @@ img {
 }
 </style>
 ```
+
+## Working with Tags
+
+By default, this plugin will get all tags and create a reference to stories entries (as described in `create-schema` function), so it's possible to list stories from tag, for example.
+
+You can change the name of template file and types by setting the `options.types.tag.name` option in `gridsome.config.js` (`StoryblokTag` is default).
+
+### Example
+
+Create a `StoryblokTag.vue` file in `src/templates` folder with the following code:
+
+```vue
+<template>
+  <Layout>
+    <h1>{{ $page.storyblokTag.name }}</h1>
+    <ul>
+      <li v-for="edge in $page.storyblokTag.belongsTo.edges" :key="edge.node.id">
+        <g-link :to="edge.node.full_slug">
+          {{ edge.node.name }}
+        </g-link>
+      </li>
+    </ul>
+  </Layout>
+</template>
+
+<page-query>
+query ($id: ID!) {
+  storyblokTag(id: $id) {
+    name
+    belongsTo {
+      edges {
+        node {
+          ... on StoryblokEntry {
+            id
+            full_slug
+            name
+          }
+        }
+      }
+    }
+  }
+}
+</page-query>
+```
+
+In your `gridsome.server.js` file, it will be necessary to create a pages for each tag as the following:
+
+```js
+module.exports = function (api) {
+  api.createPages(async ({ graphql, createPage }) => {
+    // previous code (create pages to stories)
+
+    const { data: tagData } = await graphql(`{
+      allStoryblokTag {
+        edges {
+          node {
+            id
+            name
+          }
+        }
+      }
+    }`)
+
+    tagData.allStoryblokTag.edges.forEach(({ node }) => {
+      createPage({
+        path: `/tag/${node.name}`,
+        component: './src/templates/StoryblokTag.vue',
+        context: {
+          id: node.id
+        }
+      })
+    })
+  })
+})
+```
+
+That's all! In your browser you can view a list of stories by the `foo` tag in `http://localhost:8080/tag/foo`.
 
 ## Contribution
 

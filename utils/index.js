@@ -1,10 +1,11 @@
 const getPath = require('./get-path')
-const transformStory = require('./transform-story')
+const loadData = require('./load-data')
 const getLanguages = require('./get-languages')
 const createSchema = require('./create-schema')
-const loadData = require('./load-data')
 const processImage = require('./process-image')
 const createDirectory = require('./create-directory')
+const transformStory = require('./transform-story')
+const filterAdditionalTypes = require('./filter-additional-types')
 
 /**
  * @method isStoriesContent
@@ -55,22 +56,61 @@ const getSpace = async client => {
 }
 
 /**
- * @method processData
- * @param  {Object} store    Gridsome Data Store API
- * @param  {StoryblokClient} client  StoryblokClient instance
- * @param  {Object} entity   { type: String, name: String }
- * @param  {Object} options
- * @param  {String} language
- */
-const processData = async (store, client, entity, storyBlokOptions, language = '', pluginOptions = {}) => {
+* @method processStoriesData
+* @param {Object} store            Gridsome Data Store API
+* @param {StoryblokClient}         client client  StoryblokClient instance
+* @param {Object} entity           { type: String, name: String }
+* @param {Object} storyBlokOptions params to StoryblokClient
+*/
+const processData = async (collection, client, entity, storyBlokOptions) => {
+  const data = await loadAllData(client, entity.type, {
+    per_page: 1000,
+    ...storyBlokOptions
+  })
+
+  for (const value of Object.values(data)) {
+    collection.addNode({
+      ...value
+    })
+  }
+}
+
+/**
+* @method processStoriesData
+* @param {Object} store            Gridsome Data Store API
+* @param {StoryblokClient}         client client  StoryblokClient instance
+* @param {Object} entity           { type: String, name: String }
+* @param {Object} storyBlokOptions params to StoryblokClient
+*/
+const processTagData = async (collection, client, entity, storyBlokOptions) => {
+  const data = await loadAllData(client, entity.type, {
+    per_page: 1000,
+    ...storyBlokOptions
+  })
+
+  for (const value of Object.values(data)) {
+    const { name } = value
+    collection.addNode({
+      ...value,
+      id: name
+    })
+  }
+}
+
+/**
+* @method processStoriesData
+* @param {Object} store            Gridsome Data Store API
+* @param {StoryblokClient}         client client  StoryblokClient instance
+* @param {Object} entity           { type: String, name: String }
+* @param {Object} storyBlokOptions params to StoryblokClient
+* @param {String} language         language string defined in Storyblok
+* @param {Object} pluginOptions    plugin options { downloadImages }
+*/
+const processStoriesData = async (collection, client, entity, storyBlokOptions, language = '', pluginOptions = {}) => {
   const data = await loadAllData(client, entity.type, {
     per_page: 1000,
     ...storyBlokOptions
   }, language)
-
-  const contents = store.addCollection({
-    typeName: entity.name
-  })
 
   for (const value of Object.values(data)) {
     if (isStoriesContent(entity) && pluginOptions.downloadImages) {
@@ -82,7 +122,7 @@ const processData = async (store, client, entity, storyBlokOptions, language = '
       }
     }
 
-    contents.addNode({
+    collection.addNode({
       ...value
     })
   }
@@ -97,5 +137,8 @@ module.exports = {
   getLanguages,
   createSchema,
   createDirectory,
-  transformStory
+  transformStory,
+  processTagData,
+  processStoriesData,
+  filterAdditionalTypes
 }

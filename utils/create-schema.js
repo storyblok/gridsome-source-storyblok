@@ -1,9 +1,14 @@
+const { SCHEMA_NAMES } = require('./constants')
+
 /**
  * @method createSchema
  * @param  {Object} store    Gridsome Data Store API
  * @param  {String} typeName typeName from plugin option
  */
-const createSchema = (store, typeName) => {
+const createSchema = (store, config = {}) => {
+  const typeName = config.typeName || SCHEMA_NAMES.STORY
+  const tagTypeName = config.tagTypeName || SCHEMA_NAMES.TAG
+
   store.addSchemaTypes(`
     type AlternateStory {
       id: ID!
@@ -13,6 +18,14 @@ const createSchema = (store, typeName) => {
       full_slug: String!
       is_folder: Boolean
       parent_id: Int
+    }
+  `)
+
+  store.addSchemaTypes(`
+    type ${tagTypeName} implements Node {
+      id: ID!
+      name: String!
+      taggings_count: Int!
     }
   `)
 
@@ -34,7 +47,7 @@ const createSchema = (store, typeName) => {
       group_id: String
       first_published_at: Date
       release_id: Int
-      tag_list: [String!]!
+      tag_list: [${tagTypeName}!]!
       meta_data: JSONObject
       sort_by_date: Date
       alternates: [AlternateStory!]!
