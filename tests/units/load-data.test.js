@@ -45,7 +45,7 @@ describe('loadData function', () => {
     const options = {
       version: 'published'
     }
-    loadData(client, entity, page, options, 'pt/*')
+    loadData(client, entity, page, options, 'pt/')
 
     const path = client.get.mock.calls[0][0]
     const _options = client.get.mock.calls[0][1]
