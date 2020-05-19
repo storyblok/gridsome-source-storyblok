@@ -30,8 +30,11 @@ yarn add gridsome-source-storyblok # or npm install gridsome-source-storyblok
         client: {
           accessToken: '<YOUR_ACCESS_TOKEN>'
         },
-        version: 'draft',
-        typeName: 'StoryblokEntry'
+        types: {
+          story: {
+            typeName: 'StoryblokEntry'
+          }
+        }
       }
     }
   ]
@@ -263,6 +266,50 @@ module.exports = function (api) {
 ```
 
 That's all! In your browser you can view a list of stories by the `foo` tag in `http://localhost:8080/tag/foo`.
+
+## Load data to different collections
+
+To load data to multiple collections, you need to declare the configuration multiple times in `gridsome.config.js`. Like this:
+
+```js
+{
+  siteName: 'Gridsome',
+  plugins: [
+    // default collection
+    {
+      use: 'gridsome-source-storyblok',
+      options: {
+        client: {
+          accessToken: '<YOUR_ACCESS_TOKEN>'
+        }
+      }
+    },
+
+    // specific collection (blogging for example)
+    {
+      use: 'gridsome-source-storyblok',
+      options: {
+        client: {
+          accessToken: '<YOUR_ACCESS_TOKEN>'
+        },
+        types: {
+          story: {
+            typeName: 'StoryblokBlogEntry',
+            params: {
+              starts_with: 'blog/'
+            }
+          },
+          tag: {
+            typeName: 'StoryblokBlogTag'
+          }
+        }
+      }
+    }
+  ]
+}
+```
+
+And, in your `gridsome.server.js`, you can generate your pages for each collection, attending to the name given to each collection.
 
 ## Contribution
 
