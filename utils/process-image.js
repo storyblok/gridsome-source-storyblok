@@ -1,6 +1,8 @@
 const path = require('path')
 const https = require('https')
 const fs = require('fs')
+const { isArray, isPlainObject, isString } = require('lodash')
+
 const { PLUGIN_ROOT, SOURCE_ROOT } = require('./constants')
 
 /**
@@ -94,7 +96,8 @@ const getOptionsFromImage = (imageDirectory, imageURL) => {
 const processItem = imageDirectory => async item => {
   for (const key in item) {
     const value = item[key]
-    if (value && value.constructor === String) {
+
+    if (isString(value)) {
       if (isStoryblokImage(value)) {
         try {
           const image = value
@@ -112,7 +115,7 @@ const processItem = imageDirectory => async item => {
       }
     }
 
-    if (value && value.constructor === Array) {
+    if (isArray(value)) {
       value.forEach(async _item => {
         try {
           await processItem(imageDirectory)(_item)
@@ -122,13 +125,11 @@ const processItem = imageDirectory => async item => {
       })
     }
 
-    if (value && value.constructor === Object) {
-      for (const _key in value) {
-        try {
-          await processItem(imageDirectory)(value[_key])
-        } catch (e) {
-          Promise.reject(e)
-        }
+    if (isPlainObject(value)) {
+      try {
+        await processItem(imageDirectory)(value)
+      } catch (e) {
+        Promise.reject(e)
       }
     }
   }
@@ -147,7 +148,7 @@ const processImage = (options, story) => {
 
     body.forEach(async item => {
       try {
-        processItem(imageDirectory)(item)
+        await processItem(imageDirectory)(item)
       } catch (e) {
         reject(e)
       }
