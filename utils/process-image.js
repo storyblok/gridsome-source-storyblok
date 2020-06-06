@@ -18,6 +18,18 @@ const isStoryblokImage = value => {
 }
 
 /**
+ * @method getImageUrl
+ * @param  {String} value
+ * @return {String}
+ *
+ * @example
+ * getImageUrl('https://any-url.com') // 'https://any-url.com'
+ * getImageUrl('http://any-url.com') // 'http://any-url.com'
+ * getImageUrl('//any-url.com') // 'https://any-url.com'
+ */
+const getImageUrl = value => /^https?:/.test(value) ? value : `https:${value}`
+
+/**
  * @method downloadImage
  * @param  {String} url
  * @param  {String} filePath
@@ -30,7 +42,7 @@ const downloadImage = (url, filePath, filename) => {
     return
   }
 
-  const URL = `https:${url}`
+  const URL = getImageUrl(url)
   return new Promise((resolve, reject) => {
     console.log(`Downloading: ${URL}...`)
     const file = fs.createWriteStream(filePath)
