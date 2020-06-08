@@ -27,12 +27,12 @@ const {
  */
 const StoryblokPlugin = (api, options) => {
   if (!options.client) {
-    console.error('The client option is required')
+    console.error('[gridsome-source-storyblok] The client option is required')
     return
   }
 
   if (!options.client.accessToken) {
-    console.error('The accessToken option is required')
+    console.error('[gridsome-source-storyblok] The accessToken option is required')
     return
   }
 

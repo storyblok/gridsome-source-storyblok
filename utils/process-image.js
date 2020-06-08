@@ -1,6 +1,8 @@
 const path = require('path')
 const https = require('https')
 const fs = require('fs')
+const { isArray, isPlainObject, isString } = require('lodash')
+
 const { PLUGIN_ROOT, SOURCE_ROOT } = require('./constants')
 
 /**
@@ -16,6 +18,18 @@ const isStoryblokImage = value => {
 }
 
 /**
+ * @method getImageUrl
+ * @param  {String} value
+ * @return {String}
+ *
+ * @example
+ * getImageUrl('https://any-url.com') // 'https://any-url.com'
+ * getImageUrl('http://any-url.com') // 'http://any-url.com'
+ * getImageUrl('//any-url.com') // 'https://any-url.com'
+ */
+const getImageUrl = value => /^https?:/.test(value) ? value : `https:${value}`
+
+/**
  * @method downloadImage
  * @param  {String} url
  * @param  {String} filePath
@@ -24,30 +38,30 @@ const isStoryblokImage = value => {
  */
 const downloadImage = (url, filePath, filename) => {
   if (fs.existsSync(filePath)) {
-    console.log(`Image ${filename} already downloaded`)
+    console.log(`[gridsome-source-storyblok] Image ${filename} already downloaded`)
     return
   }
 
-  const URL = `https:${url}`
+  const URL = getImageUrl(url)
   return new Promise((resolve, reject) => {
-    console.log(`Downloading: ${URL}...`)
+    console.log(`[gridsome-source-storyblok] Downloading: ${filename}...`)
     const file = fs.createWriteStream(filePath)
 
     https.get(URL, response => {
       response.pipe(file)
       file.on('finish', () => {
-        console.log('Download finished!')
+        console.log(`[gridsome-source-storyblok] ${filename} successfully downloaded!`)
         file.close(resolve)
       })
     }).on('error', err => {
-      console.error(`Error on processing image ${filename}`)
+      console.error(`[gridsome-source-storyblok] Error on processing image ${filename}`)
       console.error(err.message)
       fs.unlink(filePath, err => {
         if (err) {
           reject(err)
         }
 
-        console.log(`Removed the ${filePath} image correct`)
+        console.log(`[gridsome-source-storyblok] Removed the ${filename} image correct`)
         resolve(true)
       })
     })
@@ -91,10 +105,17 @@ const getOptionsFromImage = (imageDirectory, imageURL) => {
   }
 }
 
-const processItem = imageDirectory => async item => {
+/**
+ * @method processItem
+ * @param  {String} imageDirectory directory to save the image
+ * @param  {Object} item           object from Content Delivery API
+ * @return {Promise<Object>}       return the same object
+ */
+const processItem = async (imageDirectory, item) => {
   for (const key in item) {
     const value = item[key]
-    if (value && value.constructor === String) {
+
+    if (isString(value)) {
       if (isStoryblokImage(value)) {
         try {
           const image = value
@@ -107,31 +128,31 @@ const processItem = imageDirectory => async item => {
           }
           await downloadImage(url, filePath, filename)
         } catch (e) {
-          Promise.reject(e)
+          console.error('[gridsome-source-storyblok] Error on download image ' + e.message)
         }
       }
     }
 
-    if (value && value.constructor === Array) {
-      value.forEach(async _item => {
-        try {
-          await processItem(imageDirectory)(_item)
-        } catch (e) {
-          Promise.reject(e)
-        }
-      })
+    if (isArray(value)) {
+      try {
+        await Promise.all(
+          value.map(_item => processItem(imageDirectory, _item))
+        )
+      } catch (e) {
+        console.error(e)
+      }
     }
 
-    if (value && value.constructor === Object) {
-      for (const _key in value) {
-        try {
-          await processItem(imageDirectory)(value[_key])
-        } catch (e) {
-          Promise.reject(e)
-        }
+    if (isPlainObject(value)) {
+      try {
+        await processItem(imageDirectory, value)
+      } catch (e) {
+        console.error(e)
       }
     }
   }
+
+  return Promise.resolve(item)
 }
 
 /**
@@ -140,21 +161,18 @@ const processItem = imageDirectory => async item => {
  * @param  {Object} story   Storyblok story content
  * @return {Promise}
  */
-const processImage = (options, story) => {
-  return new Promise((resolve, reject) => {
-    const imageDirectory = options.imageDirectory
-    const body = [story.content]
+const processImage = async (options, story) => {
+  const imageDirectory = options.imageDirectory
+  try {
+    const content = await processItem(imageDirectory, story.content)
 
-    body.forEach(async item => {
-      try {
-        processItem(imageDirectory)(item)
-      } catch (e) {
-        reject(e)
-      }
+    return Promise.resolve({
+      ...story,
+      content
     })
-
-    resolve(true)
-  })
+  } catch (e) {
+    return Promise.reject(e)
+  }
 }
 
 module.exports = processImage
