@@ -114,11 +114,11 @@ const processStoriesData = async (collection, client, entity, storyBlokOptions, 
 
   for (let value of Object.values(data)) {
     if (isStoriesContent(entity) && pluginOptions.downloadImages) {
-      console.log(`Processing story ${value.name} to search images and download them...`)
+      console.log(`[gridsome-source-storyblok] Processing story ${value.name} to search images and download them...`)
       try {
         value = await processImage(pluginOptions, value)
       } catch (e) {
-        console.error('Error on process story to download images: ' + e.message)
+        console.error('[gridsome-source-storyblok] [gridsome-source-storyblok] Error on process story to download images: ' + e.message)
       }
     }
 

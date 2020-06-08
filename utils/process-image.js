@@ -38,30 +38,30 @@ const getImageUrl = value => /^https?:/.test(value) ? value : `https:${value}`
  */
 const downloadImage = (url, filePath, filename) => {
   if (fs.existsSync(filePath)) {
-    console.log(`Image ${filename} already downloaded`)
+    console.log(`[gridsome-source-storyblok] Image ${filename} already downloaded`)
     return
   }
 
   const URL = getImageUrl(url)
   return new Promise((resolve, reject) => {
-    console.log(`Downloading: ${URL}...`)
+    console.log(`[gridsome-source-storyblok] Downloading: ${filename}...`)
     const file = fs.createWriteStream(filePath)
 
     https.get(URL, response => {
       response.pipe(file)
       file.on('finish', () => {
-        console.log('Download finished!')
+        console.log(`[gridsome-source-storyblok] ${filename} successfully downloaded!`)
         file.close(resolve)
       })
     }).on('error', err => {
-      console.error(`Error on processing image ${filename}`)
+      console.error(`[gridsome-source-storyblok] Error on processing image ${filename}`)
       console.error(err.message)
       fs.unlink(filePath, err => {
         if (err) {
           reject(err)
         }
 
-        console.log(`Removed the ${filePath} image correct`)
+        console.log(`[gridsome-source-storyblok] Removed the ${filename} image correct`)
         resolve(true)
       })
     })
@@ -128,7 +128,7 @@ const processItem = async (imageDirectory, item) => {
           }
           await downloadImage(url, filePath, filename)
         } catch (e) {
-          console.error('Error on download image ' + e.message)
+          console.error('[gridsome-source-storyblok] Error on download image ' + e.message)
         }
       }
     }
