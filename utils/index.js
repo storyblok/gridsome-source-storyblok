@@ -112,13 +112,13 @@ const processStoriesData = async (collection, client, entity, storyBlokOptions, 
     ...storyBlokOptions
   }, language)
 
-  for (const value of Object.values(data)) {
+  for (let value of Object.values(data)) {
     if (isStoriesContent(entity) && pluginOptions.downloadImages) {
       console.log(`Processing story ${value.name} to search images and download them...`)
       try {
-        await processImage(pluginOptions, value)
+        value = await processImage(pluginOptions, value)
       } catch (e) {
-        console.error(e)
+        console.error('Error on process story to download images: ' + e.message)
       }
     }
 

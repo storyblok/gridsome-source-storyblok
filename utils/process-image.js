@@ -105,7 +105,13 @@ const getOptionsFromImage = (imageDirectory, imageURL) => {
   }
 }
 
-const processItem = imageDirectory => async item => {
+/**
+ * @method processItem
+ * @param  {String} imageDirectory directory to save the image
+ * @param  {Object} item           object from Content Delivery API
+ * @return {Promise<Object>}       return the same object
+ */
+const processItem = async (imageDirectory, item) => {
   for (const key in item) {
     const value = item[key]
 
@@ -122,29 +128,31 @@ const processItem = imageDirectory => async item => {
           }
           await downloadImage(url, filePath, filename)
         } catch (e) {
-          Promise.reject(e)
+          console.error('Error on download image ' + e.message)
         }
       }
     }
 
     if (isArray(value)) {
-      value.forEach(async _item => {
-        try {
-          await processItem(imageDirectory)(_item)
-        } catch (e) {
-          Promise.reject(e)
-        }
-      })
+      try {
+        await Promise.all(
+          value.map(_item => processItem(imageDirectory, _item))
+        )
+      } catch (e) {
+        console.error(e)
+      }
     }
 
     if (isPlainObject(value)) {
       try {
-        await processItem(imageDirectory)(value)
+        await processItem(imageDirectory, value)
       } catch (e) {
-        Promise.reject(e)
+        console.error(e)
       }
     }
   }
+
+  return Promise.resolve(item)
 }
 
 /**
@@ -153,21 +161,18 @@ const processItem = imageDirectory => async item => {
  * @param  {Object} story   Storyblok story content
  * @return {Promise}
  */
-const processImage = (options, story) => {
-  return new Promise((resolve, reject) => {
-    const imageDirectory = options.imageDirectory
-    const body = [story.content]
+const processImage = async (options, story) => {
+  const imageDirectory = options.imageDirectory
+  try {
+    const content = await processItem(imageDirectory, story.content)
 
-    body.forEach(async item => {
-      try {
-        await processItem(imageDirectory)(item)
-      } catch (e) {
-        reject(e)
-      }
+    return Promise.resolve({
+      ...story,
+      content
     })
-
-    resolve(true)
-  })
+  } catch (e) {
+    return Promise.reject(e)
+  }
 }
 
 module.exports = processImage
