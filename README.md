@@ -294,7 +294,7 @@ To load data to multiple collections, you need to declare the configuration mult
         },
         types: {
           story: {
-            typeName: 'StoryblokBlogEntry',
+            name: 'StoryblokBlogEntry',
             params: {
               starts_with: 'blog/'
             }
