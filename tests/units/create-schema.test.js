@@ -13,12 +13,12 @@ const getCallResult = (fn, order) => {
 }
 
 describe('createSchema function', () => {
-  test('call createSchema should be call addSchemaTypes function 3 times', () => {
+  test('call createSchema should be call addSchemaTypes function 4 times', () => {
     const store = {}
     store.addSchemaTypes = jest.fn(str => str)
     createSchema(store)
 
-    expect(store.addSchemaTypes.mock.calls.length).toBe(3)
+    expect(store.addSchemaTypes.mock.calls.length).toBe(4)
   })
 
   test('the second function call receive a correct implementation of StoryblokTag node', () => {
@@ -118,5 +118,29 @@ describe('createSchema function', () => {
 
     expect(tagData).toEqual(tagResult.replace(/\s/g, ''))
     expect(storyData).toEqual(storyResult.replace(/\s/g, ''))
+  })
+
+  test('the fourth function call receive a correct implementation of Metadata', () => {
+    const result = `
+      type StoryblokSpaceType {
+        id: ID!
+        name: String
+        domain: String
+        version: Int
+        language_codes: [String]
+      }
+
+      type Metadata @infer {
+        storyblokSpace: StoryblokSpaceType
+      }
+    `
+
+    const store = {}
+    store.addSchemaTypes = jest.fn(str => str)
+    createSchema(store, {})
+
+    const data = getCallResult(store.addSchemaTypes, 3)
+
+    expect(data).toEqual(result.replace(/\s/g, ''))
   })
 })

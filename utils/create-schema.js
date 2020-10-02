@@ -53,6 +53,20 @@ const createSchema = (store, config = {}) => {
       alternates: [AlternateStory!]!
     }
   `)
+
+  store.addSchemaTypes(`
+    type StoryblokSpaceType {
+      id: ID!
+      name: String
+      domain: String
+      version: Int
+      language_codes: [String]
+    }
+
+    type Metadata @infer {
+      storyblokSpace: StoryblokSpaceType
+    }
+  `)
 }
 
 module.exports = createSchema

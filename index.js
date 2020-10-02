@@ -59,6 +59,11 @@ const StoryblokPlugin = (api, options) => {
     createSchema(store, schemaNames)
 
     /**
+     * CREATING THE SPACE IN METADATA
+     */
+    store.addMetadata('storyblokSpace', space)
+
+    /**
      * SPECIFIC FOR STORIES ENTRYPOINT
      */
     const downloadImages = options.downloadImages || false
