@@ -64,7 +64,7 @@ const createSchema = (store, config = {}) => {
     }
 
     type Metadata @infer {
-      STORYBLOK_SPACE: StoryblokSpaceType
+      storyblokSpace: StoryblokSpaceType
     }
   `)
 }

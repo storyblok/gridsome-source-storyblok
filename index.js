@@ -61,7 +61,7 @@ const StoryblokPlugin = (api, options) => {
     /**
      * CREATING THE SPACE IN METADATA
      */
-    store.addMetadata('STORYBLOK_SPACE', space)
+    store.addMetadata('storyblokSpace', space)
 
     /**
      * SPECIFIC FOR STORIES ENTRYPOINT

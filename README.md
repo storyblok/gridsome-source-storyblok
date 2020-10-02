@@ -320,7 +320,7 @@ To get the space informations, you can set this following query in your `<static
 ```
 query {
   metadata {
-    STORYBLOK_SPACE {
+    storyblokSpace {
       id
       name
       version

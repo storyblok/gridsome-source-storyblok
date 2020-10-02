@@ -131,7 +131,7 @@ describe('createSchema function', () => {
       }
 
       type Metadata @infer {
-        STORYBLOK_SPACE: StoryblokSpaceType
+        storyblokSpace: StoryblokSpaceType
       }
     `
 
