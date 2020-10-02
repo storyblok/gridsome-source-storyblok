@@ -10,20 +10,6 @@ const createSchema = (store, config = {}) => {
   const tagTypeName = config.tagTypeName || SCHEMA_NAMES.TAG
 
   store.addSchemaTypes(`
-    type StoryblokSpaceType {
-      id: ID!
-      name: String
-      domain: String
-      version: Int
-      language_codes: [String]
-    }
-
-    type Metadata @infer {
-      STORYBLOK_SPACE: StoryblokSpaceType
-    }
-  `)
-
-  store.addSchemaTypes(`
     type AlternateStory {
       id: ID!
       name: String!
@@ -65,6 +51,20 @@ const createSchema = (store, config = {}) => {
       meta_data: JSONObject
       sort_by_date: Date
       alternates: [AlternateStory!]!
+    }
+  `)
+
+  store.addSchemaTypes(`
+    type StoryblokSpaceType {
+      id: ID!
+      name: String
+      domain: String
+      version: Int
+      language_codes: [String]
+    }
+
+    type Metadata @infer {
+      STORYBLOK_SPACE: StoryblokSpaceType
     }
   `)
 }
