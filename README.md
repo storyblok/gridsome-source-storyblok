@@ -311,6 +311,25 @@ To load data to multiple collections, you need to declare the configuration mult
 
 And, in your `gridsome.server.js`, you can generate your pages for each collection, attending to the name given to each collection.
 
+## Get Space informations
+
+It is possible to get the space informations using the GraphQL Data Layer. The space information will be storage in [Gridsome's global metadata](https://gridsome.org/docs/metadata/#global-metadata), so, it will be avaialable for your entire project.
+
+To get the space informations, you can set this following query in your `<static-query>` in your vue component:
+
+```
+query {
+  metadata {
+    STORYBLOK_SPACE {
+      id
+      name
+      version
+      language_codes
+    }
+  }
+}
+```
+
 ## Contribution
 
 Fork me on [Github](https://github.com/storyblok/gridsome-source-storyblok).
