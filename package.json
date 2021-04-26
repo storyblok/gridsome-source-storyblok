@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "lodash": "^4.17.20",
-    "storyblok-js-client": "^2.5.0",
+    "storyblok-js-client": "^4.0.5",
     "storyblok-vue": "^1.0.5"
   },
   "keywords": [
@@ -29,6 +29,7 @@
     "storyblok"
   ],
   "devDependencies": {
+    "axios": "^0.21.1",
     "eslint": "^7.10.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.22.1",
