@@ -4275,10 +4275,10 @@ stealthy-require@^1.1.1:
   resolved "https://registry.yarnpkg.com/stealthy-require/-/stealthy-require-1.1.1.tgz#35b09875b4ff49f26a777e509b3090a3226bf24b"
   integrity sha1-NbCYdbT/SfJqd35QmzCQoyJr8ks=
 
-storyblok-js-client@^4.0.5:
-  version "4.0.5"
-  resolved "https://registry.yarnpkg.com/storyblok-js-client/-/storyblok-js-client-4.0.5.tgz#5aa0797f8e6661cd727d64bbe4d7f55c225d2ed0"
-  integrity sha512-izjMXUUGT0+hyBXSXqT6ocEkeL+ZeMqhF168v/1uL7+vP841L0cOKnfA0yGml2LLfU5uFL83BF13xMpsPS2z7w==
+storyblok-js-client@^4.0.6:
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/storyblok-js-client/-/storyblok-js-client-4.0.6.tgz#14b18f445ff219dfb21a3fc559336d240b1e87f6"
+  integrity sha512-aoYr8PedWnsbtkgDRlJvzV06nis+Jz6gmsQ6DJs8bnNrE7L5GWAUyoWmSqd1HqBhJ/gxf51IqBoSlGh3hde2gw==
   dependencies:
     qs "^6.9.4"
 

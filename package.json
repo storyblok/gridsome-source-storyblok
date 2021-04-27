@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "lodash": "^4.17.20",
-    "storyblok-js-client": "^4.0.5",
+    "storyblok-js-client": "^4.0.6",
     "storyblok-vue": "^1.0.5"
   },
   "keywords": [
